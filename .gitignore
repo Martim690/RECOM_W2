@@ -1,0 +1,22 @@
+# Ficheiros auxiliares do compilador LaTeX
+*.aux
+*.lof
+*.log
+*.lot
+*.out
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# Ficheiros da Bibliografia (Biber/BibTeX)
+*.bbl
+*.bcf
+*.blg
+*.run.xml
+
+# Ficheiros do VS Code
+.vscode/
+
+# (Opcional) Ignorar PDFs gerados - descomenta a linha abaixo se não quiseres guardar os PDFs no repositório
+# *.pdf

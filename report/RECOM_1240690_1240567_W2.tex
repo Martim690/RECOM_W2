@@ -22,12 +22,12 @@
 \usepackage[section]{placeins}
 \usepackage{csquotes}
 \usepackage[backend=biber,style=ieee]{biblatex}
-\addbibresource{references.bib}
-\usepackage{lmodern} % Resolve o erro de expansão de fontes do microtype
+\addbibresource{RECOM_references_W2.bib}
+\usepackage{lmodern}
 
 % --- CONFIGURATIONS ---
 \geometry{margin=2.5cm}
-\graphicspath{{figures/}{images/}}
+\setlength{\headheight}{15pt}
 
 \sisetup{
     locale = US,
@@ -35,58 +35,19 @@
     output-decimal-marker = {.}
 }
 
-% Header and Footer
 \pagestyle{fancy}
 \fancyhf{}
 \fancyhead[L]{RECOM - Mobile Communication Networks}
 \fancyhead[R]{2025/2026}
 \fancyfoot[C]{\thepage}
-
 \renewcommand{\headrulewidth}{0.4pt}
 
-% Catppuccin Colors for Code
-\definecolor{catpBase}{HTML}{EFF1F5}
-\definecolor{catpText}{HTML}{4C4F69}
-\definecolor{catpComment}{HTML}{8C8FA1}
-\definecolor{catpKeyword}{HTML}{8839EF}
-\definecolor{catpString}{HTML}{40A02B}
-\definecolor{catpNumber}{HTML}{FE640B}
-\definecolor{catpBorder}{HTML}{BCC0CC} 
-
-\lstdefinestyle{codestyle}{
-    basicstyle=\ttfamily\footnotesize\color{catpText}, 
-    commentstyle=\color{catpComment}\itshape,
-    keywordstyle=\color{catpKeyword}\bfseries,
-    numberstyle=\tiny\color{catpNumber},
-    stringstyle=\color{catpString},
-    breaklines=true,                   
-    captionpos=b,                      
-    keepspaces=true,                   
-    numbers=left,                      
-    numbersep=10pt,
-    tabsize=2,
-    showstringspaces=false
-}
-
-\newtcblisting{codeblock}[1][]{
-    colback=catpBase,
-    colframe=catpBorder,
-    arc=6pt,
-    boxrule=1pt,
-    top=6pt, bottom=6pt, left=6pt, right=6pt,
-    listing only,
-    listing options={style=codestyle},
-    #1
-}
-
-% Document Information
 \newcommand{\projecttitle}{Worksheet n. 2 \\ Wi-Fi and BLE Integration with Raspberry Pi Units}
 \newcommand{\projectauthors}{André Moreira (1240567) \\ Martim Alves (1240690)}
 \newcommand{\projectdate}{June 2026}
 
 \begin{document}
 
-% --- TITLE PAGE ---
 \begin{titlepage}
     \centering
     \includegraphics[width=0.6\textwidth]{isep_logo.png} 
@@ -102,7 +63,6 @@
     \thispagestyle{empty}
 \end{titlepage}
 
-% --- INDICES ---
 \clearpage
 \pagenumbering{roman}
 \tableofcontents
@@ -111,15 +71,15 @@
 \clearpage
 \pagenumbering{arabic}
 
-% --- CONTENT ---
-
 \chapter{Introduction}
-This laboratory work focuses on the experimental use of Wi-Fi and Bluetooth Low Energy (BLE) in a small wireless system based on Raspberry Pi units \cite{recom_w2}. The emphasis is not on reproducing detailed configuration guides, but on implementing the system, performing measurements, observing its behavior, and discussing the results obtained. It explores the practical applications of IEEE 802.11 \cite{ieee80211} and Bluetooth standards \cite{bluetooth_core}.
+This laboratory work focuses on the experimental use of Wi-Fi and Bluetooth Low Energy (BLE) in a small wireless system based on Raspberry Pi units \cite{recom_w2}. The emphasis is not on reproducing detailed configuration guides, but on implementing the system, performing measurements, observing its behavior, and discussing the results obtained. 
+
+\textit{Note: This report currently documents the findings for Part A (Initial Setup) and Part B1 (Connectivity and latency) based on the experimental data gathered so far.}
 
 \chapter{Part A - Initial Setup}
 
 \section{Quick access to the Raspberry Pi units (A1)}
-For this initial setup, we established quick access over the network. The following table identifies RPI1 and RPI2, including their hostnames and active interfaces.
+For this initial setup, we established quick access over the network via SSH. The following table identifies RPI1 and RPI2, including their hostnames and the network interfaces identified through the \texttt{ip a} command.
 
 \begin{table}[H]
     \centering
@@ -129,156 +89,157 @@ For this initial setup, we established quick access over the network. The follow
         \toprule
         \textbf{Unit} & \textbf{Hostname} & \textbf{Active Interfaces} \\
         \midrule
-        RPI1 & [TODO: Hostname 1] & [TODO: Interfaces] \\
-        RPI2 & [TODO: Hostname 2] & [TODO: Interfaces] \\
+        RPI1 & \texttt{rpi1} & \texttt{lo}, \texttt{eth0}, \texttt{wlan0} \\
+        RPI2 & \texttt{rpi2} & \texttt{lo}, \texttt{eth0}, \texttt{wlan0} \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/A1-RPI1.png} 
+        \caption*{RPI1 Interface Status}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/A1-RPI2.png} 
+        \caption*{RPI2 Interface Status}
+    \end{minipage}
+    \vspace{0.5cm}
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/SSH-RPI2.png} 
+        \caption*{SSH Connection Established}
+    \end{minipage}
+    \caption{Verification of hostnames, interfaces, and SSH access for both Raspberry Pi units.}
+    \label{fig:a1_setup}
+\end{figure}
+
 \section{Wi-Fi connection of the two RPis (A2)}
-Both units were associated with the correct SSID provided by the assigned Wi-Fi infrastructure. The table below registers the IP address obtained by each RPi.
+Both units were associated with the correct SSIDs provided by the assigned Wi-Fi infrastructure. The table below registers the IP addresses obtained by each RPi over the wireless interface (\texttt{wlan0}).
 
 \begin{table}[H]
     \centering
     \caption{SSID and IP addresses for the connected Raspberry Pi units.}
     \label{tab:wifi_connection}
-    \begin{tabularx}{0.8\textwidth}{X c c}
+    \begin{tabularx}{\textwidth}{X c c}
         \toprule
-        \textbf{Unit} & \textbf{SSID} & \textbf{IP Address} \\
+        \textbf{Unit} & \textbf{SSID (2.4 GHz / 5 GHz)} & \textbf{Wireless IP Address} \\
         \midrule
-        RPI1 & [TODO: SSID] & [TODO: IP] \\
-        RPI2 & [TODO: SSID] & [TODO: IP] \\
+        RPI1 & Recom\_AM\_PK\_2 / Recom\_AM\_PK\_5 & 192.168.1.139 \\
+        RPI2 & Recom\_AM\_PK\_2 / Recom\_AM\_PK\_5 & 192.168.1.110 \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
+To validate the configuration, we captured the router settings, the wireless interfaces configured, and performed initial ICMP ping tests between the nodes.
+
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{images/placeholder_connectivity.png} 
-    \caption{Image captures confirming IP connectivity between the two units and the gateway.}
-    \label{fig:connectivity_capture}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/RPI1-Wireless-IP.png} 
+        \caption*{RPI1 Wireless IP Allocation}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/RPI2-Wireless-IP.png} 
+        \caption*{RPI2 Wireless IP Allocation}
+    \end{minipage}
+    \vspace{0.5cm}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/Router-Settings.png} 
+        \caption*{Router Wi-Fi Configurations}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/Ips-da-Rede.png} 
+        \caption*{Nmap Network Scan}
+    \end{minipage}
+    \caption{Network configuration and IP validation for the wireless infrastructure.}
+    \label{fig:network_configs}
 \end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/A2-RPI1-Pings.png} 
+        \caption*{Ping from RPI1 to RPI2}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/A2-RPI2-Pings.png} 
+        \caption*{Ping from RPI2 to RPI1}
+    \end{minipage}
+    \caption{Initial connectivity validation via ICMP pings between the two RPis.}
+    \label{fig:initial_pings}
+\end{figure}
+
 
 \chapter{Part B - Wi-Fi measurements between RPI1 and RPI2}
 
 \section{Connectivity and latency (B1)}
-We executed \texttt{ping} tests between the two RPis under two different physical conditions: a short distance with line of sight, and a larger distance with one simple obstacle. 
+We executed 20 \texttt{ping} packet tests between the two RPis under a short distance with line of sight. To comprehensively analyze the network, these tests were performed independently on both the \SI{2.4}{\GHz} and \SI{5}{\GHz} bands.
 
 \begin{table}[H]
     \centering
-    \caption{Average latency and packet loss observed under different physical conditions.}
+    \caption{Average latency and packet loss observed under short distance (Line of sight).}
     \label{tab:latency_measurements}
     \begin{tabularx}{\textwidth}{X c c}
         \toprule
         \textbf{Physical Condition} & \textbf{Average Latency (ms)} & \textbf{Packet Loss (\%)} \\
         \midrule
-        Short distance (Line of sight) & [TODO: latency] & [TODO: loss] \\
-        Larger distance (One simple obstacle) & [TODO: latency] & [TODO: loss] \\
+        Short distance (Line of sight) - \SI{2.4}{\GHz} & \SI{10.08}{\ms} & 0\% \\
+        Short distance (Line of sight) - \SI{5}{\GHz} & \SI{7.64}{\ms} & 0\% \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
 \textbf{Discussion:} 
-% TODO: Write a short comment on the differences between the two conditions.
-
-\section{Throughput and link quality (B2)}
-To measure Wi-Fi performance, we utilized \texttt{iperf3} \cite{iperf3} and collected signal information available in the Raspberry Pi.
-
-\begin{table}[H]
-    \centering
-    \caption{Comparative throughput and link quality (RSSI/Link rate) in 2.4 GHz and 5 GHz.}
-    \label{tab:throughput_measurements}
-    \begin{tabularx}{\textwidth}{l c c c}
-        \toprule
-        \textbf{Condition} & \textbf{Band} & \textbf{Throughput (Mbps)} & \textbf{Link Quality / RSSI} \\
-        \midrule
-        Test 1 & \SI{2.4}{\GHz} & [TODO] & [TODO] \\
-        Test 2 & \SI{2.4}{\GHz} & [TODO] & [TODO] \\
-        Test 3 & \SI{2.4}{\GHz} & [TODO] & [TODO] \\
-        \midrule
-        Test 1 & \SI{5}{\GHz}   & [TODO] & [TODO] \\
-        Test 2 & \SI{5}{\GHz}   & [TODO] & [TODO] \\
-        Test 3 & \SI{5}{\GHz}   & [TODO] & [TODO] \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
-
-\textbf{Discussion:} 
-% TODO: Brief discussion of the observed behavior.
-
-
-\chapter{Part C - BLE connection between RPI1 and RPI2}
-
-\section{BLE test with a smartphone (C1)}
-The local BLE setup was validated by detecting and establishing a simple connection with a smartphone from the assigned RPi.
-
-\begin{table}[H]
-    \centering
-    \caption{Smartphone discovery results.}
-    \label{tab:smartphone_discovery}
-    \begin{tabularx}{0.8\textwidth}{X c}
-        \toprule
-        \textbf{Parameter} & \textbf{Value} \\
-        \midrule
-        Device Name & [TODO] \\
-        Device MAC Address & [TODO] \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
+As observed in the ping tests conducted at a short distance with line of sight, the \SI{5}{\GHz} band provided a lower average latency (\SI{7.64}{\ms}) compared to the \SI{2.4}{\GHz} band (\SI{10.08}{\ms}). The calculated averages reflect the bidirectional \texttt{rtt} measurements (RPI1 $\rightarrow$ RPI2 and RPI2 $\rightarrow$ RPI1). Both bands exhibited optimal reliability with 0\% packet loss across 20 packets. This behavior aligns with theoretical expectations \cite{ieee80211}, as the \SI{5}{\GHz} band typically offers less interference, reduced channel congestion, and faster data rates at close range, whereas \SI{2.4}{\GHz} is more susceptible to background noise in laboratory environments.
 
 \begin{figure}[H]
     \centering
-    % \includegraphics[width=0.8\textwidth]{images/placeholder_ble_smartphone.png} 
-    \caption{Capture of the BLE connection status with the smartphone.}
-    \label{fig:ble_smartphone_capture}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/rpi1-b1-perto-2.4GHZ.png} 
+        \caption*{RPI1 Ping (\SI{2.4}{\GHz})}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/rpi2-b1-perto-2.4GHZ.png} 
+        \caption*{RPI2 Ping (\SI{2.4}{\GHz})}
+    \end{minipage}
+    \vspace{0.5cm}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/rpi1-b1-perto-5GHZ.png} 
+        \caption*{RPI1 Ping (\SI{5}{\GHz})}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/rpi2-b1-perto-5GHZ.png} 
+        \caption*{RPI2 Ping (\SI{5}{\GHz})}
+    \end{minipage}
+    \caption{Latency measurements via ping (20 packets) for both frequency bands.}
+    \label{fig:latency_captures}
 \end{figure}
 
-\section{Interoperability test between the two RPis (C2)}
-Following smartphone validation, interoperability was tested between the two RPis on the island by exchanging a brief text message.
-
-\begin{table}[H]
-    \centering
-    \caption{Results of the BLE interoperability test between RPI1 and RPI2 (repeated three times).}
-    \label{tab:ble_interoperability}
-    \begin{tabularx}{\textwidth}{c X c X}
-        \toprule
-        \textbf{Attempt} & \textbf{Payload Exchanged} & \textbf{Status} & \textbf{Observations} \\
-        \midrule
-        1 & [TODO] & [Success/Fail] & [TODO] \\
-        2 & [TODO] & [Success/Fail] & [TODO] \\
-        3 & [TODO] & [Success/Fail] & [TODO] \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
-
-\textbf{Discussion:}
-% TODO: Brief comment on the interoperability test results.
-
-
-\chapter{Part D - Coexistence of Wi-Fi and BLE}
-To observe coexistence, a Wi-Fi latency or throughput test was executed while a BLE operation was simultaneously active.
-
-\begin{table}[H]
-    \centering
-    \caption{Comparison of Wi-Fi performance with and without active BLE operations.}
-    \label{tab:coexistence_comparison}
-    \begin{tabularx}{\textwidth}{X c c c}
-        \toprule
-        \textbf{Scenario} & \textbf{Throughput / Latency} & \textbf{BLE Status} & \textbf{Impact Observed} \\
-        \midrule
-        Wi-Fi Baseline & [TODO] & Inactive & N/A \\
-        Wi-Fi with BLE & [TODO] & Active & [TODO] \\
-        \bottomrule
-    \end{tabularx}
-\end{table}
-
-\textbf{Discussion:}
-% TODO: Indicate whether any visible impact on Wi-Fi or BLE behavior was observed.
-
 \chapter{Conclusion}
-% TODO: Write the final conclusion for the report.
+The initial setup successfully established a wireless network between two Raspberry Pi units using a Linksys router, configuring both \SI{2.4}{\GHz} and \SI{5}{\GHz} bands. Remote access via SSH was proven to be stable, facilitating headless management. 
 
-% --- BIBLIOGRAPHY ---
+In the connectivity tests, the \SI{5}{\GHz} band demonstrated superior performance at short distances, presenting lower latency and excellent stability. Further sections of this laboratory will build upon this functional baseline.
+
 \printbibliography
 
 \end{document}

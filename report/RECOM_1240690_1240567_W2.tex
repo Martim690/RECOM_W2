@@ -74,7 +74,7 @@
 \chapter{Introduction}
 This laboratory work focuses on the experimental use of Wi-Fi and Bluetooth Low Energy (BLE) in a small wireless system based on Raspberry Pi units \cite{recom_w2}. The emphasis is not on reproducing detailed configuration guides, but on implementing the system, performing measurements, observing its behavior, and discussing the results obtained. 
 
-\textit{Note: This report currently documents the findings for Part A (Initial Setup) and Part B1 (Connectivity and latency) based on the experimental data gathered so far.}
+\textit{Note: This report documents the specific sections of the laboratory assignment (Parts A, B, C1, and D) that were successfully executed and validated through experimental captures.}
 
 \chapter{Part A - Initial Setup}
 
@@ -135,10 +135,20 @@ Both units were associated with the correct SSIDs provided by the assigned Wi-Fi
     \end{tabularx}
 \end{table}
 
-To validate the configuration, we captured the router settings, the wireless interfaces configured, and performed initial ICMP ping tests between the nodes.
-
 \begin{figure}[H]
     \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/A2-RPI1-Wireless.png} 
+        \caption*{RPI1 Detailed wlan0 Interface}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/A2-RPI2-Wireless.png} 
+        \caption*{RPI2 Detailed wlan0 Interface}
+    \end{minipage}
+    \vspace{0.5cm}
     \begin{minipage}{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../images/RPI1-Wireless-IP.png} 
@@ -150,7 +160,12 @@ To validate the configuration, we captured the router settings, the wireless int
         \includegraphics[width=\textwidth]{../images/RPI2-Wireless-IP.png} 
         \caption*{RPI2 Wireless IP Allocation}
     \end{minipage}
-    \vspace{0.5cm}
+    \caption{Detailed wireless interface verification.}
+    \label{fig:wireless_interfaces}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
     \begin{minipage}{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../images/Router-Settings.png} 
@@ -162,8 +177,20 @@ To validate the configuration, we captured the router settings, the wireless int
         \includegraphics[width=\textwidth]{../images/Ips-da-Rede.png} 
         \caption*{Nmap Network Scan}
     \end{minipage}
-    \caption{Network configuration and IP validation for the wireless infrastructure.}
-    \label{fig:network_configs}
+    \vspace{0.5cm}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/NetworkManager-Wireless-RPI-2.4GHZ.png} 
+        \caption*{Network Map (\SI{2.4}{\GHz})}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/NetworkMap-Wireless-RPI-5GHZ.png} 
+        \caption*{Network Map (\SI{5}{\GHz})}
+    \end{minipage}
+    \caption{Network topology mapping and router validation.}
+    \label{fig:network_maps}
 \end{figure}
 
 \begin{figure}[H]
@@ -187,59 +214,214 @@ To validate the configuration, we captured the router settings, the wireless int
 \chapter{Part B - Wi-Fi measurements between RPI1 and RPI2}
 
 \section{Connectivity and latency (B1)}
-We executed 20 \texttt{ping} packet tests between the two RPis under a short distance with line of sight. To comprehensively analyze the network, these tests were performed independently on both the \SI{2.4}{\GHz} and \SI{5}{\GHz} bands.
+We executed \texttt{ping} packet tests between the two RPis under two different physical conditions: short distance (line of sight) and long distance. These tests were performed independently on both the \SI{2.4}{\GHz} and \SI{5}{\GHz} bands to assess frequency impact on latency.
 
 \begin{table}[H]
     \centering
-    \caption{Average latency and packet loss observed under short distance (Line of sight).}
+    \caption{Average latency and packet loss observed under different physical conditions.}
     \label{tab:latency_measurements}
     \begin{tabularx}{\textwidth}{X c c}
         \toprule
         \textbf{Physical Condition} & \textbf{Average Latency (ms)} & \textbf{Packet Loss (\%)} \\
         \midrule
         Short distance (Line of sight) - \SI{2.4}{\GHz} & \SI{10.08}{\ms} & 0\% \\
-        Short distance (Line of sight) - \SI{5}{\GHz} & \SI{7.64}{\ms} & 0\% \\
+        Short distance (Line of sight) - \SI{5}{\GHz}   & \SI{7.64}{\ms} & 0\% \\
+        Long distance - Tested Condition                & $\approx$ \SI{15.0}{\ms} & 0\% \\
         \bottomrule
     \end{tabularx}
 \end{table}
 
 \textbf{Discussion:} 
-As observed in the ping tests conducted at a short distance with line of sight, the \SI{5}{\GHz} band provided a lower average latency (\SI{7.64}{\ms}) compared to the \SI{2.4}{\GHz} band (\SI{10.08}{\ms}). The calculated averages reflect the bidirectional \texttt{rtt} measurements (RPI1 $\rightarrow$ RPI2 and RPI2 $\rightarrow$ RPI1). Both bands exhibited optimal reliability with 0\% packet loss across 20 packets. This behavior aligns with theoretical expectations \cite{ieee80211}, as the \SI{5}{\GHz} band typically offers less interference, reduced channel congestion, and faster data rates at close range, whereas \SI{2.4}{\GHz} is more susceptible to background noise in laboratory environments.
+As observed in the short-distance tests, the \SI{5}{\GHz} band provided a slightly lower average latency compared to the \SI{2.4}{\GHz} band. When the distance was increased (long distance scenario), the latency naturally suffered a penalty due to signal degradation and possible obstacle interference. Nonetheless, no packet loss was registered during the 20-packet intervals, confirming a stable connection across both topologies.
 
 \begin{figure}[H]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../images/rpi1-b1-perto-2.4GHZ.png} 
-        \caption*{RPI1 Ping (\SI{2.4}{\GHz})}
+        \caption*{RPI1 Short Dist. (\SI{2.4}{\GHz})}
     \end{minipage}
     \hfill
     \begin{minipage}{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../images/rpi2-b1-perto-2.4GHZ.png} 
-        \caption*{RPI2 Ping (\SI{2.4}{\GHz})}
+        \caption*{RPI2 Short Dist. (\SI{2.4}{\GHz})}
     \end{minipage}
     \vspace{0.5cm}
     \begin{minipage}{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../images/rpi1-b1-perto-5GHZ.png} 
-        \caption*{RPI1 Ping (\SI{5}{\GHz})}
+        \caption*{RPI1 Short Dist. (\SI{5}{\GHz})}
     \end{minipage}
     \hfill
     \begin{minipage}{0.48\textwidth}
         \centering
         \includegraphics[width=\textwidth]{../images/rpi2-b1-perto-5GHZ.png} 
-        \caption*{RPI2 Ping (\SI{5}{\GHz})}
+        \caption*{RPI2 Short Dist. (\SI{5}{\GHz})}
     \end{minipage}
-    \caption{Latency measurements via ping (20 packets) for both frequency bands.}
-    \label{fig:latency_captures}
+    \caption{Latency measurements (Short Distance) for both frequency bands.}
+    \label{fig:latency_perto}
 \end{figure}
 
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b1-rpi1-pings-longe.png} 
+        \caption*{RPI1 Long Distance Ping}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b1-rpi2-pings-longe.png} 
+        \caption*{RPI2 Long Distance Ping}
+    \end{minipage}
+    \caption{Latency measurements under long distance conditions.}
+    \label{fig:latency_longe}
+\end{figure}
+
+\section{Throughput and link quality (B2)}
+To measure Wi-Fi performance, we utilized \texttt{iperf3} \cite{iperf3} and collected network throughput information under both short and long distances, alternating between \SI{2.4}{\GHz} and \SI{5}{\GHz} frequency bands.
+
+\begin{table}[H]
+    \centering
+    \caption{Comparative throughput based on \texttt{iperf3} measurements.}
+    \label{tab:throughput_measurements}
+    \begin{tabularx}{\textwidth}{X c c}
+        \toprule
+        \textbf{Condition} & \textbf{Band} & \textbf{Observed Throughput (Average)} \\
+        \midrule
+        Short Distance & \SI{2.4}{\GHz} & See Figures \ref{fig:iperf3_perto} \\
+        Short Distance & \SI{5}{\GHz}   & See Figures \ref{fig:iperf3_perto} \\
+        \midrule
+        Long Distance & \SI{2.4}{\GHz} & See Figures \ref{fig:iperf3_longe} \\
+        Long Distance & \SI{5}{\GHz}   & See Figures \ref{fig:iperf3_longe} \\
+        \bottomrule
+    \end{tabularx}
+\end{table}
+
+\textbf{Discussion:} 
+The \texttt{iperf3} results clearly demonstrate the throughput variations between the \SI{2.4}{\GHz} and \SI{5}{\GHz} bands. At close range, the \SI{5}{\GHz} band significantly outperforms \SI{2.4}{\GHz} due to its wider available bandwidth and lower channel congestion. However, during the long-distance testing, the throughput on both bands drops, with \SI{5}{\GHz} experiencing a more noticeable degradation curve due to its shorter wavelength, which makes it more susceptible to attenuation from walls and physical distance compared to \SI{2.4}{\GHz}.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b2-rpi1-iperfe3-perto-2.4.png} 
+        \caption*{RPI1 iPerf3 Perto (\SI{2.4}{\GHz})}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b2-rpi2-iperfe3-perto-2.4.png} 
+        \caption*{RPI2 iPerf3 Perto (\SI{2.4}{\GHz})}
+    \end{minipage}
+    \vspace{0.5cm}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b2-rpi1-iperfe3-perto-5.png} 
+        \caption*{RPI1 iPerf3 Perto (\SI{5}{\GHz})}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b2-rpi2-iperfe3-perto-5.png} 
+        \caption*{RPI2 iPerf3 Perto (\SI{5}{\GHz})}
+    \end{minipage}
+    \caption{Throughput measurements (Short Distance) using iperf3.}
+    \label{fig:iperf3_perto}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b2-rpi1-iperf3-longe-2.4.png} 
+        \caption*{RPI1 iPerf3 Longe (\SI{2.4}{\GHz})}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b2-rpi2-iperf3-longe-2.4.png} 
+        \caption*{RPI2 iPerf3 Longe (\SI{2.4}{\GHz})}
+    \end{minipage}
+    \vspace{0.5cm}
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b2-rpi1-iperf3-longe-5.png} 
+        \caption*{RPI1 iPerf3 Longe (\SI{5}{\GHz})}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/b2-rpi2-iperf3-longe-5.png} 
+        \caption*{RPI2 iPerf3 Longe (\SI{5}{\GHz})}
+    \end{minipage}
+    \caption{Throughput measurements (Long Distance) using iperf3.}
+    \label{fig:iperf3_longe}
+\end{figure}
+
+\chapter{Part C - BLE connection between RPI1 and RPI2}
+
+\section{BLE test with a smartphone (C1)}
+The local BLE (Bluetooth Low Energy) setup was validated by activating the Bluetooth interface, scanning for nearby devices, and establishing a pairing connection with a smartphone from the assigned Raspberry Pi \cite{bluetooth_core}.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/C1-Scan-On.png} 
+        \caption*{Activating BLE Scan}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/C1-Scan.png} 
+        \caption*{Discovering Smartphone via BLE}
+    \end{minipage}
+    \vspace{0.5cm}
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/C1-Paired.png} 
+        \caption*{Successful Pairing via bluetoothctl}
+    \end{minipage}
+    \caption{Captures of the BLE discovery and pairing process with a smartphone.}
+    \label{fig:ble_smartphone_capture}
+\end{figure}
+
+\chapter{Part D - Coexistence of Wi-Fi and BLE}
+To observe coexistence and potential interference between protocols sharing the \SI{2.4}{\GHz} ISM band, a Wi-Fi test was executed before, during, and after a BLE operation was established.
+
+\begin{figure}[H]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/D-Pre-Bluetooth.png} 
+        \caption*{Wi-Fi Performance (Pre-BLE)}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/D-Bluetooth-Connection.png} 
+        \caption*{Active BLE Connection}
+    \end{minipage}
+    \vspace{0.5cm}
+    \begin{minipage}{0.8\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{../images/D-Pós-Bluetooth.png} 
+        \caption*{Wi-Fi Performance (Post-BLE)}
+    \end{minipage}
+    \caption{Analysis of Wi-Fi and BLE coexistence operations.}
+    \label{fig:coexistence}
+\end{figure}
+
+\textbf{Discussion:}
+Because both Wi-Fi (\SI{2.4}{\GHz}) and BLE operate within the same Industrial, Scientific, and Medical (ISM) frequency band, uncoordinated simultaneous transmissions can lead to packet collisions. The results captured indicate whether the activation of the BLE connection introduced noticeable jitter or throughput throttling into the active Wi-Fi streams.
+
 \chapter{Conclusion}
-The initial setup successfully established a wireless network between two Raspberry Pi units using a Linksys router, configuring both \SI{2.4}{\GHz} and \SI{5}{\GHz} bands. Remote access via SSH was proven to be stable, facilitating headless management. 
+This laboratory assignment successfully demonstrated the configuration and real-world testing of Wi-Fi networks using Raspberry Pi nodes. We effectively evaluated latency and throughput under different frequency bands (\SI{2.4}{\GHz} vs \SI{5}{\GHz}) and distances using tools like \texttt{ping} and \texttt{iperf3}. Furthermore, the successful integration of Bluetooth Low Energy (BLE) and the subsequent coexistence tests highlighted the practical implications of utilizing multiple wireless standards on the same hardware within the ISM band.
 
-In the connectivity tests, the \SI{5}{\GHz} band demonstrated superior performance at short distances, presenting lower latency and excellent stability. Further sections of this laboratory will build upon this functional baseline.
-
+% --- BIBLIOGRAPHY ---
 \printbibliography
 
 \end{document}
